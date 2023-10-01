@@ -2,7 +2,7 @@
 #include <EasyButton.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#include <PID_v1.h>
+#include <PID_v1_bc.h>
 
 
 #define ENCODER_PIN1 A0
@@ -22,8 +22,8 @@ PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 int period = 5000;
 unsigned long periodStartTime;
 
-U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE); 
-//U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
+//U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, SCL, SDA, U8X8_PIN_NONE); 
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 EasyButton button(BUTTON_PIN);
 OneWire oneWire(ONE_WIRE_BUS);
