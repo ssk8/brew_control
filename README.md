@@ -10,3 +10,5 @@ Main parts are as follows:
 
 Operation overview:
 Device should start in 0% duty configuration, rotate encoder to change duty. Click the encoder button to enter the PID temperature controller and toggle back to 0% duty cycle. Double click encoder button to change temperature setpoint.
+
+NOTE: onewire is not working on Rpi Pico/arduino!
