@@ -1,6 +1,8 @@
 # brew_control
 This is intended as a brewpot controller with either constant duty cycle or PID temperature controll.
 
+<img src=https://raw.githubusercontent.com/ssk8/project_pics/main/brew_control.jpeg  width="300"/> 
+
 Main parts are as follows:
 - oled screen
 - rotary encoder
