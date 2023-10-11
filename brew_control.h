@@ -10,6 +10,8 @@
 #define BUTTON_PIN A2
 #define RELAY_PIN A3
 #define ONE_WIRE_BUS 10
+#define PUMP_PIN 9
+#define BUTTON2_PIN 8
 #define RELAY_ACTIVE HIGH
 #define INITIAL_SETPOINT 40
 #define TEMPERATURE_PRECISION 9
@@ -26,6 +28,7 @@ unsigned long periodStartTime;
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 EasyButton button(BUTTON_PIN);
+EasyButton button2(BUTTON2_PIN);
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature tempProbe(&oneWire);
 
@@ -35,6 +38,7 @@ volatile long encoderValue = 0;
 bool button_single = true;
 bool last_button_single = true;
 bool button_double = false;
+bool pump = false;
 
 void updateSetpoint(){
   digitalWrite(RELAY_PIN, !RELAY_ACTIVE);
@@ -48,7 +52,7 @@ void updateSetpoint(){
     u8g2.print("current setpoint:");
     u8g2.setFont(u8g2_font_helvB12_tf); 
     u8g2.setCursor(0, 35);
-    u8g2.print(Setpoint);
+    u8g2.print(Setpoint, 1);
     u8g2.print("°C");
     u8g2.setCursor(0, 55);
     u8g2.print("new: ");
@@ -61,20 +65,27 @@ void updateSetpoint(){
 }
 
 void updateConstDisp(){
-  u8g2.setFont(u8g2_font_helvB12_tf); 
+  u8g2.setFont(u8g2_font_helvB14_tf); 
   u8g2.setFontDirection(0);
   u8g2.clearBuffer();
-  u8g2.setCursor(0, 15);
+  u8g2.setCursor(0, 18);
   u8g2.print("Temp: ");
-  u8g2.print(Input);
+  u8g2.print(Input, 1);
   u8g2.print("°C");
-  u8g2.setCursor(0, 30);
+  u8g2.setCursor(0, 34);
   u8g2.setFont(u8g2_font_helvB10_tf); 
   u8g2.print("Duty cyle: ");
   u8g2.setFont(u8g2_font_helvB24_tf); 
-  u8g2.setCursor(45, 64);
+  u8g2.setCursor(30, 64);
   u8g2.print((duty * 100.0) / period, 0);
   u8g2.println("%");
+
+  if (pump) {
+  u8g2.setFont(u8g2_font_helvB24_tf); 
+  u8g2.setCursor(108, 50);
+  u8g2.print("P");
+  }
+  
   u8g2.sendBuffer();
 }
 
@@ -84,18 +95,25 @@ void updatePIDDisp(){
   u8g2.clearBuffer();
   u8g2.setCursor(0, 15);
   u8g2.print("Temp: ");
-  u8g2.print(Input);
+  u8g2.print(Input, 1);
   u8g2.print("°C");
   u8g2.setCursor(0, 35);
   u8g2.setFont(u8g2_font_helvB08_tf); 
   u8g2.print("Setpoint: ");
   u8g2.setFont(u8g2_font_helvB12_tf); 
-  u8g2.print(Setpoint);
+  u8g2.print(Setpoint, 0);
   u8g2.print("°C");
   u8g2.setCursor(0, 55);
   u8g2.print("Output: ");
   u8g2.print((Output * 100.0) / period, 0);
   u8g2.println("%");
+  
+  if (pump) {
+  u8g2.setFont(u8g2_font_helvB24_tf); 
+  u8g2.setCursor(108, 50);
+  u8g2.print("P");
+  }
+  
   u8g2.sendBuffer();
 }
 
@@ -118,6 +136,13 @@ void singleClick()
   if (!last_button_single) last_button_single = true;
 }
 
+void pumpClick()
+{
+  pump = !pump;
+  if (pump) digitalWrite(PUMP_PIN, HIGH);
+  else digitalWrite(PUMP_PIN, LOW);
+}
+
 void doubleClick()
 {
   button_double = !button_double;
@@ -126,4 +151,9 @@ void doubleClick()
 void buttonInterrupt()
 {
   button.read();
+}
+
+void button2Interrupt()
+{
+  button2.read();
 }
