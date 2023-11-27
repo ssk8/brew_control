@@ -7,6 +7,7 @@ void setup(void) {
   pinMode(ENCODER_PIN1, INPUT_PULLUP); 
   pinMode(ENCODER_PIN2, INPUT_PULLUP);
   pinMode(RELAY_PIN, OUTPUT);
+  pinMode(PUMP_SWITCH, INPUT_PULLUP);
   pinMode(PUMP_PIN, OUTPUT);
   digitalWrite(PUMP_PIN, LOW);
   
@@ -17,11 +18,6 @@ void setup(void) {
   button.onPressed(singleClick);
   button.onSequence(2, 500, doubleClick);
   button.enableInterrupt(buttonInterrupt);
-
-  button2.begin();
-  button2.onPressed(pumpClick);
-  // button2.onSequence(2, 500, doubleClick);
-  button2.enableInterrupt(button2Interrupt);
 
   tempProbe.begin();
   tempProbe.setResolution(0, TEMPERATURE_PRECISION);
@@ -59,6 +55,15 @@ void loop(void) {
   myPID.Compute();
   updatePIDDisp();
   duty = Output;
+  }
+  
+  if (digitalRead(PUMP_SWITCH)==LOW){
+    pump = true;
+    digitalWrite(PUMP_PIN, HIGH);
+  }
+  else{
+    pump = false;
+    digitalWrite(PUMP_PIN, LOW);
   }
  
   if (millis() - periodStartTime > period) periodStartTime += period;

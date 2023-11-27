@@ -11,7 +11,7 @@
 #define RELAY_PIN A3
 #define ONE_WIRE_BUS 10
 #define PUMP_PIN 9
-#define BUTTON2_PIN 8
+#define PUMP_SWITCH 8
 #define RELAY_ACTIVE HIGH
 #define INITIAL_SETPOINT 40
 #define TEMPERATURE_PRECISION 9
@@ -28,7 +28,7 @@ unsigned long periodStartTime;
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
 EasyButton button(BUTTON_PIN);
-EasyButton button2(BUTTON2_PIN);
+
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature tempProbe(&oneWire);
 
@@ -136,12 +136,6 @@ void singleClick()
   if (!last_button_single) last_button_single = true;
 }
 
-void pumpClick()
-{
-  pump = !pump;
-  if (pump) digitalWrite(PUMP_PIN, HIGH);
-  else digitalWrite(PUMP_PIN, LOW);
-}
 
 void doubleClick()
 {
@@ -151,9 +145,4 @@ void doubleClick()
 void buttonInterrupt()
 {
   button.read();
-}
-
-void button2Interrupt()
-{
-  button2.read();
 }
